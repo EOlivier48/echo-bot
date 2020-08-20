@@ -9,6 +9,8 @@ add_subdirectory(lib/websocket-beast)    # discordpp-websocket-beast
 add_subdirectory(lib/plugin-overload)    # discordpp-plugin-overload
 add_subdirectory(lib/plugin-responder)   # discordpp-plugin-responder
 add_subdirectory(lib/plugin-ratelimit)   # discordpp-plugin-ratelimit
+set(BUILD_TESTING FALSE)
+add_subdirectory(lib/certify)            # SSL certificates
 
 set(SOURCE_FILES main.cc)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
@@ -42,6 +44,7 @@ INCLUDE_DIRECTORIES(
         ${discordpp-plugin-ratelimit_SOURCE_DIR}
         ${json_SOURCE_DIR}
         ${OPENSSL_INCLUDE_DIR}
+        ${certify_SOURCE_DIR}/include
 )
 
 TARGET_LINK_LIBRARIES(

@@ -26,7 +26,7 @@ std::istream &safeGetline(std::istream &is, std::string &t);
 void filter(std::string &target, const std::string &pattern);
 
 int main() {
-    dpp::log::filter = dpp::log::info;
+    dpp::log::filter = dpp::log::trace;
     dpp::log::out = &std::cerr;
 
     std::cout
@@ -69,7 +69,7 @@ int main() {
 
     bot->respond("help", "Mention me and I'll echo your message back!");
 
-    bot->respond("about", [&bot](json msg) {
+    bot->respond("about", [&bot](const json& msg) {
         std::ostringstream content;
         content
             << "Sure thing, "
@@ -84,6 +84,10 @@ int main() {
                   "/channels/" + msg["channel_id"].get<std::string>() +
                       "/messages",
                   json({{"content", content.str()}}));
+    });
+
+    bot->respond("reboot", [&bot](const json&) {
+        bot->reconnect();
     });
 
     // Create handler for the MESSAGE_CREATE payload, this receives all messages

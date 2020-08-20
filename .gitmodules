@@ -16,3 +16,6 @@
 [submodule "lib/websocket-beast"]
 	path = lib/websocket-beast
 	url = https://github.com/DiscordPP/websocket-beast.git
+[submodule "lib/certify"]
+	path = lib/certify
+	url = https://github.com/djarek/certify.git
