@@ -15,11 +15,14 @@
 #include <discordpp/plugin-overload.hh>
 #include <discordpp/plugin-ratelimit.hh>
 #include <discordpp/plugin-responder.hh>
+#include <discordpp/plugin-constructs.hh>
 #include <discordpp/rest-beast.hh>
 #include <discordpp/websocket-simpleweb.hh>
 
-template class discordpp::PluginResponder<discordpp::PluginOverload<discordpp::PluginRateLimit<discordpp::WebsocketSimpleWeb<discordpp::RestBeast<discordpp::Bot>>>>>;
-using DppBot = discordpp::PluginResponder<discordpp::PluginOverload<discordpp::PluginRateLimit<discordpp::WebsocketSimpleWeb<discordpp::RestBeast<discordpp::Bot>>>>>;
+#define DPPBOT discordpp::PluginConstructs<discordpp::PluginResponder<discordpp::PluginOverload<discordpp::PluginRateLimit<discordpp::WebsocketSimpleWeb<discordpp::RestBeast<discordpp::Bot>>>>>>
+template class DPPBOT;
+using DppBot = DPPBOT;
+#undef DPPBOT
 
 std::shared_ptr<DppBot> newBot(){
     return std::make_shared<DppBot>();

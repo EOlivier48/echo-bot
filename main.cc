@@ -1,4 +1,5 @@
 #include "include.hh"
+#include <fmt/format.h>
 
 namespace asio = boost::asio;
 using json = nlohmann::json;
@@ -78,16 +79,15 @@ int main() {
 
     // Create handler for the MESSAGE_CREATE payload, this receives all messages
     // sent that the bot can see.
-    bot->handlers.insert(
-        {"MESSAGE_CREATE", [&bot, &self](json msg) {
+    bot->handleMESSAGE_CREATE([&bot, &self](const dpp::MessageIn& msg) {
              // Scan through mentions in the message for self
              bool mentioned = false;
-             for (const json &mention : msg["mentions"]) {
+             for (const dpp::User &mention : *msg.mentions) {
                  mentioned = mentioned or mention["id"] == self["id"];
              }
              if (mentioned) {
                  // Identify and remove mentions of self from the message
-                 std::string content = msg["content"].get<std::string>();
+                 std::string content = *msg.content;
                  unsigned int oldlength, length = content.length();
                  do{
                      oldlength = length;
@@ -101,16 +101,15 @@ int main() {
 
                  // Get the target user's display name
                  std::string name =
-                     (msg["member"]["nick"].is_null()
-                          ? msg["author"]["username"].get<std::string>()
-                          : msg["member"]["nick"].get<std::string>());
+                     (!msg.member || (**msg.member)["nick"].is_null())
+                          ? (*msg.author)["username"].get<std::string>()
+                          : (**msg.member)["nick"].get<std::string>();
 
                  std::cout << "Echoing " << name << '\n';
 
                  // Echo the created message
                  bot->call("POST",
-                           "/channels/" + msg["channel_id"].get<std::string>() +
-                               "/messages",
+                           fmt::format("/channels/{}/messages", *msg.channel_id),
                            json({{"content", content}}));
 
                  // Set status to Playing "with [author]"
@@ -120,7 +119,7 @@ int main() {
                             {"afk", false},
                             {"since", "null"}});
              }
-         }});
+         });
 
     // Create Asio context, this handles async stuff.
     auto aioc = std::make_shared<asio::io_context>();
