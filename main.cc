@@ -95,7 +95,7 @@ int main() {
                          content,
                          std::regex(R"(<@!?)" + self["id"].get<std::string>() +
                                     R"(> ?)"),
-                         "");
+                         "Sport Mode!");
                      length = content.length();
                  }while(oldlength > length);
 
